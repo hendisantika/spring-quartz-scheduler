@@ -1,6 +1,10 @@
 package com.hendisantika.springquartzscheduler.job;
 
+import com.hendisantika.springquartzscheduler.model.Email;
 import lombok.RequiredArgsConstructor;
+import org.quartz.JobDataMap;
+import org.quartz.JobExecutionContext;
+import org.quartz.JobExecutionException;
 import org.springframework.boot.autoconfigure.mail.MailProperties;
 import org.springframework.scheduling.quartz.QuartzJobBean;
 import org.springframework.stereotype.Component;
@@ -22,4 +26,15 @@ public class EmailJob extends QuartzJobBean {
     private final EmailSenderService emailSenderService;
 
     private final MailProperties mailProperties;
+
+    @Override
+    protected void executeInternal(JobExecutionContext context) throws JobExecutionException {
+        JobDataMap jobDataMap = context.getMergedJobDataMap();
+        String subject = jobDataMap.getString("subject");
+        String emailId = jobDataMap.getString("email");
+        String body = jobDataMap.getString("body");
+
+        Email email = new Email(emailId, "ashishbg.g@gmail.com", subject, body);
+        emailSenderService.sendSimpleEmail(email);
+    }
 }
