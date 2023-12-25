@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.time.ZonedDateTime;
+import java.util.Date;
 import java.util.UUID;
 
 /**
@@ -82,6 +83,19 @@ public class EmailSchedulerController {
                 .withDescription("Send Email Job")
                 .usingJobData(jobDataMap)
                 .storeDurably()
+                .build();
+    }
+
+    private Trigger buildTrigger(JobDetail jobDetail, ZonedDateTime startTime) {
+        return TriggerBuilder
+                .newTrigger()
+                .forJob(jobDetail)
+                .withIdentity(jobDetail.getKey().getName(), "email-triggers")
+                .startAt(Date.from(startTime.toInstant()))
+                .withSchedule(SimpleScheduleBuilder
+                        .simpleSchedule()
+                        .withMisfireHandlingInstructionFireNow()    //
+                )
                 .build();
     }
 }
