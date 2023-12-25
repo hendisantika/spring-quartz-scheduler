@@ -1,6 +1,7 @@
 package com.hendisantika.springquartzscheduler.job;
 
 import com.hendisantika.springquartzscheduler.model.Email;
+import com.hendisantika.springquartzscheduler.service.EmailSenderService;
 import lombok.RequiredArgsConstructor;
 import org.quartz.JobDataMap;
 import org.quartz.JobExecutionContext;
