@@ -1,14 +1,12 @@
 package com.hendisantika.springquartzscheduler.controller;
 
+import com.hendisantika.springquartzscheduler.job.EmailJob;
 import com.hendisantika.springquartzscheduler.model.EmailRequest;
 import com.hendisantika.springquartzscheduler.model.EmailResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.quartz.JobDetail;
-import org.quartz.Scheduler;
-import org.quartz.SchedulerException;
-import org.quartz.Trigger;
+import org.quartz.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.time.ZonedDateTime;
+import java.util.UUID;
 
 /**
  * Created by IntelliJ IDEA.
@@ -69,5 +68,20 @@ public class EmailSchedulerController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(emailResponse);
         }
+    }
+
+    private JobDetail buildJobDetail(EmailRequest emailRequest) {
+        JobDataMap jobDataMap = new JobDataMap();
+        jobDataMap.put("email", emailRequest.getEmail());
+        jobDataMap.put("subject", emailRequest.getSubject());
+        jobDataMap.put("body", emailRequest.getBody());
+
+        return JobBuilder
+                .newJob(EmailJob.class)
+                .withIdentity(UUID.randomUUID().toString(), "email-jobs")
+                .withDescription("Send Email Job")
+                .usingJobData(jobDataMap)
+                .storeDurably()
+                .build();
     }
 }
