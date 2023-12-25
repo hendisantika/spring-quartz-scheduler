@@ -3,6 +3,7 @@ package com.hendisantika.springquartzscheduler.controller;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.quartz.Scheduler;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
@@ -21,4 +22,9 @@ import org.springframework.web.bind.annotation.RestController;
 public class EmailSchedulerController {
 
     private final Scheduler scheduler;
+
+    @GetMapping("/ok")
+    public String getHome() {
+        return "All OK";
+    }
 }
